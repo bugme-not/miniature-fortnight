@@ -103,8 +103,8 @@
 const configs = {
     vless: `vless://cxlvin777@app-analytics-services.com:443?encryption=none&type=ws&host=__RUN_APP_HOST__&headerType=none&path=%2FCxlvinVlWS&security=tls`,
     
-    // Fixed SSH URI formatted specifically for NetMod / HTTP Injector parsers
-    ssh: `ssh://cxlvin:cxlvin@app-analytics-services.com:443?payload=GET+/cxlvin+HTTP/1.1[crlf]Host:+__RUN_APP_HOST__[crlf]Upgrade:+websocket[crlf]Connection:+Upgrade[crlf][crlf]&key=KUX3sw04Vw3D4VZXnUUdxzm0ktSn8qvoPZ3hvirbN91tTqyY31h2V7XVKv73sB2Ip7cKHnVVndl18F3jorSXhHVEiHQG%2BSRUmh1Jw%2FRsIwmX7a%2Fd5VFKbHgyJC0336NiF6NAl9N4OEvpObsCWPTkTR1SRLhUB2tY29%2BUcnSx7eV2HTVFEyRqpUrI55BDks4kBljuT8yjntYCPxE9lkI8xQFWekoSxYVx%2F%2FlMpMtdA7o%3D#SSH-CloudRun`
+    // Exact NetMod SSH URI structure
+    ssh: `ssh://cxlvin:cxlvin@app-analytics-services.com:443?KUX3sw04Vw3D4VZXnUUdxzm0ktSn8qvoPZ3hvirbN91tTqyY31h2V7XVKv73sB2InLNszLb20qjUB2ixW1HbjYv+xa43XDafsfZUAD/rfPhBgIYQGC388/bkZAsyB88ctFYuODKRUcmOCPx83q++JYZ+kvSXxx/kScdMSqzFKeFMrhPKnwSbVD78XtSLQfMbW71Zib2+kAMscnInpK8jAyW/Kadw20cxjfUgU4GE4boe73B9OO6GH7+SiNiELvxQa5w9et0CYlXGtzNrOMVxcskcwSFcagK9I/LfO1fj/h4=`
 };
 
 let currentType = 'vless';
