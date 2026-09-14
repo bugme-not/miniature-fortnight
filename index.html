@@ -103,10 +103,11 @@
 const configs = {
     vless: `vless://cxlvin777@app-analytics-services.com:443?encryption=none&type=ws&host=__RUN_APP_HOST__&headerType=none&path=%2FCxlvinVlWS&security=tls`,
     
-    // Auto-populates the dynamic server host straight into the payload
-    ssh: `GET /cxlvin HTTP/1.1[crlf]Host: __RUN_APP_HOST__[crlf]Upgrade: websocket[crlf]Connection: Upgrade[crlf][crlf]
+    ssh: `USER/PASS:
+cxlvin:cxlvin
 
-SSH: app-analytics-services.com:443@cxlvin:cxlvin`
+PAYLOAD:
+GET /cxlvin HTTP/1.1[crlf]Host: __RUN_APP_HOST__[crlf]Upgrade: websocket[crlf]Connection: Upgrade[crlf][crlf]`
 };
 
 let currentType = 'vless';
