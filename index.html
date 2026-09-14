@@ -23,27 +23,6 @@
             padding: 20px;
             overflow-x: hidden;
         }
-        .btn-group {
-            margin-bottom: 25px;
-            display: flex;
-            gap: 12px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        button {
-            background: #fff;
-            border: 2px solid #000;
-            padding: 10px 24px;
-            font-family: inherit;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.15s;
-            min-width: 110px;
-        }
-        button.active {
-            background: #000;
-            color: #fff;
-        }
         .display-content {
             width: 100%;
             max-width: 600px;
@@ -57,25 +36,22 @@
 </head>
 <body>
 
-<div class="btn-group">
-    <button id="vlessBtn" class="active" onclick="showConfig('vless')">VLESS</button>
-    <button id="sshBtn" onclick="showConfig('ssh')">SSH</button>
-</div>
-
 <div id="displayArea" class="display-content"></div>
 
 <script>
-const configs = {
-    vless: `UUID: cxlvin777
+const template = `VLESS
+UUID: cxlvin777
 PATH: /CxlvinVlWS
-SERVER HOST: __RUN_APP_HOST__`,
-    
-    ssh: `USER/PASS:
+SERVER HOST: __RUN_APP_HOST__
+
+========================================
+
+SSH
+USER/PASS:
 cxlvin:cxlvin
 
 PAYLOAD:
-GET /cxlvin HTTP/1.1[crlf]Host: __RUN_APP_HOST__[crlf]Upgrade: websocket[crlf]Connection: Upgrade[crlf][crlf]`
-};
+GET /cxlvin HTTP/1.1[crlf]Host: __RUN_APP_HOST__[crlf]Upgrade: websocket[crlf]Connection: Upgrade[crlf][crlf]`;
 
 function getRunAppHost() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -86,16 +62,12 @@ function getRunAppHost() {
     return hostname ? hostname : 'NULL';
 }
 
-function showConfig(type) {
+function loadConfig() {
     const host = getRunAppHost();
-    
-    document.getElementById('displayArea').textContent = configs[type].replaceAll('__RUN_APP_HOST__', host);
-    
-    document.querySelectorAll('.btn-group button').forEach(btn => btn.classList.remove('active'));
-    document.getElementById(`${type}Btn`).classList.add('active');
+    document.getElementById('displayArea').textContent = template.replaceAll('__RUN_APP_HOST__', host);
 }
 
-document.addEventListener('DOMContentLoaded', () => showConfig('vless'));
+document.addEventListener('DOMContentLoaded', loadConfig);
 </script>
 
 </body>
