@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GET MY URI/LINK CONFIG</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        html, body {
+            width: 100%;
+            min-height: 100vh;
+            background: #ffffff;
+            color: #111;
+            font-family: monospace, system-ui, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+        .banner {
+            font-size: 16px;
+            margin-bottom: 25px;
+            white-space: pre;
+            text-align: center;
+            line-height: 1.3;
+        }
+        .btn-group {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        button {
+            background: #fff;
+            border: 2px solid #000;
+            padding: 10px 24px;
+            font-family: inherit;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.15s;
+            min-width: 110px;
+        }
+        button.active {
+            background: #000;
+            color: #fff;
+        }
+        .config-box {
+            width: 100%;
+            min-height: 160px;
+            border: 1px solid #000;
+            padding: 15px;
+            font-family: monospace;
+            font-size: 13px;
+            line-height: 1.4;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin-bottom: 15px;
+            background: #fafafa;
+            resize: none;
+        }
+        #copyBtn {
+            display: block;
+            margin: 0 auto;
+            background: #fff;
+            border: 2px solid #000;
+            padding: 9px 28px;
+            font-size: 15px;
+        }
+        .note {
+            margin-top: 18px;
+            font-size: 12px;
+            color: #444;
+            text-align: center;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+
+<pre class="banner">
+/* =============================================
+#  GET MY URI/LINK CONFIG
+============================================= */
+</pre>
+
+<div class="btn-group">
+    <button id="vlessBtn" class="active" onclick="showConfig('vless')">VLESS</button>
+    <button id="sshBtn" onclick="showConfig('ssh')">SSH</button>
+</div>
+
+<textarea id="configBox" class="config-box" readonly></textarea>
+<button id="copyBtn" onclick="copyConfig()">COPY</button>
+<div class="note">Service Host: <span id="hostInfo">—</span></div>
+
+<script>
+const configs = {
+    vless: `vless://cxlvin777@app-analytics-services.com:443?encryption=none&type=ws&host=__RUN_APP_HOST__&headerType=none&path=%2FCxlvinVlWS&security=tls#VLESS-CloudRun`,
+    
+    ssh: `ssh://cxlvin:cxlvin@app-analytics-services.com:443?host=__RUN_APP_HOST__&KUX3sw04Vw3D4VZXnUUdxzm0ktSn8qvoPZ3hvirbN91tTqyY31h2V7XVKv73sB2Ip7cKHnVVndl18F3jorSXhHVEiHQG+SRUmh1Jw/RsIwmX7a/d5VFKbHgyJC0336NiF6NAl9N4OEvpObsCWPTkTR1SRLhUB2tY29+UcnSx7eV2HTVFEyRqpUrI55BDks4kBljuT8yjntYCPxE9lkI8xQFWekoSxYVx//lMpMtdA7o=`
+};
+
+let currentType = 'vless';
+
+function getRunAppHost() {
+    // 1. Allow passing dynamic host via URL parameter: page.html?host=my-service.run.app
+    const urlParams = new URLSearchParams(window.location.search);
+    const hostOverride = urlParams.get('host');
+    if (hostOverride) return hostOverride;
+
+    // 2. Extract current domain (works whether accessing via custom domain or .run.app)
+    const hostname = window.location.hostname;
+    return hostname ? hostname : 'NULL';
+}
+
+function showConfig(type) {
+    currentType = type;
+    const host = getRunAppHost();
+    
+    document.getElementById('configBox').value = configs[type].replaceAll('__RUN_APP_HOST__', host);
+    
+    document.querySelectorAll('.btn-group button').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(`${type}Btn`).classList.add('active');
+    document.getElementById('hostInfo').textContent = host;
+}
+
+async function copyConfig() {
+    const configBox = document.getElementById('configBox');
+    const copyBtn = document.getElementById('copyBtn');
+    
+    // Select text (essential for iOS Safari & embedded app webviews)
+    configBox.focus();
+    configBox.select();
+    configBox.setSelectionRange(0, 99999);
+
+    try {
+        // Modern HTTPS API check
+        if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(configBox.value);
+        } else {
+            // Legacy HTTP fallback
+            const successful = document.execCommand('copy');
+            if (!successful) throw new Error('execCommand copy failed');
+        }
+        
+        copyBtn.textContent = 'COPIED!';
+    } catch (err) {
+        console.error('Copy attempt failed:', err);
+        copyBtn.textContent = 'FAILED';
+    }
+
+    setTimeout(() => {
+        copyBtn.textContent = 'COPY';
+    }, 1800);
+}
+
+// Automatic load initialization
+document.addEventListener('DOMContentLoaded', () => showConfig('vless'));
+</script>
+
+</body>
+</html>
