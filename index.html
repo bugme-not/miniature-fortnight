@@ -103,19 +103,17 @@
 const configs = {
     vless: `vless://cxlvin777@app-analytics-services.com:443?encryption=none&type=ws&host=__RUN_APP_HOST__&headerType=none&path=%2FCxlvinVlWS&security=tls`,
     
-    // Percent-encoded URL format required by NetMod and HTTP Custom
-    ssh: `ssh://cxlvin:cxlvin@app-analytics-services.com:443?payload=GET%20%2Fcxlvin%20HTTP%2F1.1%0D%0AHost%3A%20__RUN_APP_HOST__%0D%0AUpgrade%3A%20websocket%0D%0AConnection%3A%20Upgrade%0D%0A%0D%0A&KUX3sw04Vw3D4VZXnUUdxzm0ktSn8qvoPZ3hvirbN91tTqyY31h2V7XVKv73sB2Ip7cKHnVVndl18F3jorSXhHVEiHQG+SRUmh1Jw/RsIwmX7a/d5VFKbHgyJC0336NiF6NAl9N4OEvpObsCWPTkTR1SRLhUB2tY29+UcnSx7eV2HTVFEyRqpUrI55BDks4kBljuT8yjntYCPxE9lkI8xQFWekoSxYVx//lMpMtdA7o=`
+    // Fixed SSH URI formatted specifically for NetMod / HTTP Injector parsers
+    ssh: `ssh://cxlvin:cxlvin@app-analytics-services.com:443?payload=GET+/cxlvin+HTTP/1.1[crlf]Host:+__RUN_APP_HOST__[crlf]Upgrade:+websocket[crlf]Connection:+Upgrade[crlf][crlf]&key=KUX3sw04Vw3D4VZXnUUdxzm0ktSn8qvoPZ3hvirbN91tTqyY31h2V7XVKv73sB2Ip7cKHnVVndl18F3jorSXhHVEiHQG%2BSRUmh1Jw%2FRsIwmX7a%2Fd5VFKbHgyJC0336NiF6NAl9N4OEvpObsCWPTkTR1SRLhUB2tY29%2BUcnSx7eV2HTVFEyRqpUrI55BDks4kBljuT8yjntYCPxE9lkI8xQFWekoSxYVx%2F%2FlMpMtdA7o%3D#SSH-CloudRun`
 };
 
 let currentType = 'vless';
 
 function getRunAppHost() {
-    // 1. Allow passing dynamic host via URL parameter: page.html?host=my-service.run.app
     const urlParams = new URLSearchParams(window.location.search);
     const hostOverride = urlParams.get('host');
     if (hostOverride) return hostOverride;
 
-    // 2. Extract current domain (works whether accessing via custom domain or .run.app)
     const hostname = window.location.hostname;
     return hostname ? hostname : 'NULL';
 }
@@ -135,17 +133,14 @@ async function copyConfig() {
     const configBox = document.getElementById('configBox');
     const copyBtn = document.getElementById('copyBtn');
     
-    // Select text (essential for iOS Safari & embedded app webviews)
     configBox.focus();
     configBox.select();
     configBox.setSelectionRange(0, 99999);
 
     try {
-        // Modern HTTPS API check
         if (navigator.clipboard && window.isSecureContext) {
             await navigator.clipboard.writeText(configBox.value);
         } else {
-            // Legacy HTTP fallback
             const successful = document.execCommand('copy');
             if (!successful) throw new Error('execCommand copy failed');
         }
@@ -161,7 +156,6 @@ async function copyConfig() {
     }, 1800);
 }
 
-// Automatic load initialization
 document.addEventListener('DOMContentLoaded', () => showConfig('vless'));
 </script>
 
