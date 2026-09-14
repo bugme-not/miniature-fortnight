@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SERVICE ENDPOINT & CREDENTIAL BUILDER</title>
+    <title>CONFIG</title>
     <style>
         * {
             box-sizing: border-box;
@@ -13,148 +13,62 @@
         html, body {
             width: 100%;
             min-height: 100vh;
-            background: #0d1117;
-            color: #00ff66;
-            font-family: "Courier New", Courier, monospace;
+            background: #ffffff;
+            color: #111;
+            font-family: monospace, system-ui, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 15px;
+            padding: 20px;
             overflow-x: hidden;
         }
-        .terminal-container {
-            width: 100%;
-            max-width: 650px;
-            border: 1px solid #00ff66;
-            padding: 20px;
-            background: #05080c;
-            box-shadow: 0 0 15px rgba(0, 255, 102, 0.15);
-        }
-        .banner {
-            font-size: 13px;
-            margin-bottom: 12px;
-            white-space: pre;
-            text-align: center;
-            line-height: 1.2;
-            font-weight: bold;
-            color: #00ff66;
-            text-shadow: 0 0 5px rgba(0, 255, 102, 0.5);
-        }
-        .divider {
-            color: #00ff66;
-            opacity: 0.6;
-            text-align: center;
-            font-size: 12px;
-            margin: 12px 0;
-            user-select: none;
-            overflow: hidden;
-            white-space: nowrap;
-        }
         .btn-group {
-            margin: 15px 0;
+            margin-bottom: 25px;
             display: flex;
             gap: 12px;
             justify-content: center;
             flex-wrap: wrap;
         }
         button {
-            background: #05080c;
-            color: #00ff66;
-            border: 1px solid #00ff66;
-            padding: 8px 20px;
+            background: #fff;
+            border: 2px solid #000;
+            padding: 10px 24px;
             font-family: inherit;
-            font-size: 14px;
+            font-size: 16px;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: 0.15s;
             min-width: 110px;
-            text-transform: uppercase;
-        }
-        button:hover {
-            background: rgba(0, 255, 102, 0.1);
         }
         button.active {
-            background: #00ff66;
-            color: #05080c;
-            font-weight: bold;
-            box-shadow: 0 0 8px rgba(0, 255, 102, 0.4);
+            background: #000;
+            color: #fff;
         }
-        .prompt-line {
-            font-size: 12px;
-            margin-bottom: 8px;
-            color: #00cc52;
-        }
-        .config-box {
+        .display-content {
             width: 100%;
-            min-height: 180px;
-            border: 1px solid #00ff66;
-            padding: 12px;
-            font-family: "Courier New", Courier, monospace;
-            font-size: 13px;
-            line-height: 1.4;
-            white-space: pre-wrap;
-            word-break: break-all;
-            margin-bottom: 15px;
-            background: #000000;
-            color: #00ff66;
-            resize: none;
-            outline: none;
-        }
-        #copyBtn {
-            display: block;
-            margin: 15px auto 0 auto;
-            background: #05080c;
-            color: #00ff66;
-            border: 1px solid #00ff66;
-            padding: 9px 28px;
+            max-width: 600px;
+            font-family: monospace;
             font-size: 14px;
-            font-weight: bold;
-        }
-        #copyBtn:hover {
-            background: #00ff66;
-            color: #05080c;
-        }
-        .note {
-            margin-top: 15px;
-            font-size: 12px;
-            color: #00cc52;
-            text-align: center;
+            line-height: 1.6;
+            white-space: pre-wrap;
             word-break: break-all;
         }
     </style>
 </head>
 <body>
 
-<div class="terminal-container">
-    <pre class="banner">
-┌──────────────────────────────────────────────┐
-│  SERVICE ENDPOINT & CREDENTIAL BUILDER       │
-└──────────────────────────────────────────────┘
-</pre>
-
-    <div class="divider">--------------------------------------------------</div>
-
-    <div class="btn-group">
-        <button id="vlessBtn" class="active" onclick="showConfig('vless')">[1] VLESS</button>
-        <button id="sshBtn" onclick="showConfig('ssh')">[2] SSH</button>
-    </div>
-
-    <div class="divider">--------------------------------------------------</div>
-
-    <div class="prompt-line">root@cloudrun:~# cat current_config.out</div>
-
-    <textarea id="configBox" class="config-box" readonly></textarea>
-
-    <button id="copyBtn" onclick="copyConfig()">> COPY TO CLIPBOARD</button>
-
-    <div class="divider">--------------------------------------------------</div>
-
-    <div class="note">[SYS_INFO] Target Host: <span id="hostInfo">—</span></div>
+<div class="btn-group">
+    <button id="vlessBtn" class="active" onclick="showConfig('vless')">VLESS</button>
+    <button id="sshBtn" onclick="showConfig('ssh')">SSH</button>
 </div>
+
+<div id="displayArea" class="display-content"></div>
 
 <script>
 const configs = {
-    vless: `vless://cxlvin777@app-analytics-services.com:443?encryption=none&type=ws&host=__RUN_APP_HOST__&headerType=none&path=%2FCxlvinVlWS&security=tls`,
+    vless: `UUID: cxlvin777
+PATH: /CxlvinVlWS
+SERVER HOST: __RUN_APP_HOST__`,
     
     ssh: `USER/PASS:
 cxlvin:cxlvin
@@ -162,8 +76,6 @@ cxlvin:cxlvin
 PAYLOAD:
 GET /cxlvin HTTP/1.1[crlf]Host: __RUN_APP_HOST__[crlf]Upgrade: websocket[crlf]Connection: Upgrade[crlf][crlf]`
 };
-
-let currentType = 'vless';
 
 function getRunAppHost() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -175,41 +87,12 @@ function getRunAppHost() {
 }
 
 function showConfig(type) {
-    currentType = type;
     const host = getRunAppHost();
     
-    document.getElementById('configBox').value = configs[type].replaceAll('__RUN_APP_HOST__', host);
+    document.getElementById('displayArea').textContent = configs[type].replaceAll('__RUN_APP_HOST__', host);
     
     document.querySelectorAll('.btn-group button').forEach(btn => btn.classList.remove('active'));
     document.getElementById(`${type}Btn`).classList.add('active');
-    document.getElementById('hostInfo').textContent = host;
-}
-
-async function copyConfig() {
-    const configBox = document.getElementById('configBox');
-    const copyBtn = document.getElementById('copyBtn');
-    
-    configBox.focus();
-    configBox.select();
-    configBox.setSelectionRange(0, 99999);
-
-    try {
-        if (navigator.clipboard && window.isSecureContext) {
-            await navigator.clipboard.writeText(configBox.value);
-        } else {
-            const successful = document.execCommand('copy');
-            if (!successful) throw new Error('execCommand copy failed');
-        }
-        
-        copyBtn.textContent = '> COPIED!';
-    } catch (err) {
-        console.error('Copy attempt failed:', err);
-        copyBtn.textContent = '> FAILED';
-    }
-
-    setTimeout(() => {
-        copyBtn.textContent = '> COPY TO CLIPBOARD';
-    }, 1800);
 }
 
 document.addEventListener('DOMContentLoaded', () => showConfig('vless'));
